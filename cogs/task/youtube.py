@@ -73,7 +73,7 @@ class YoutubeCom(commands.Cog, name=__name__):
                     await self.check_channel(save, user_id=user, channel_id=save['CHANNEL_ID'])
                 save["LAST_TIME"] = datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
                 save.save()
-            except e:
+            except Exception as e:
                 print(inter.guild_id, e)
         await inter.response.send_message(f"refreshed")
 
@@ -138,7 +138,7 @@ class YoutubeCom(commands.Cog, name=__name__):
                     await self.check_channel(save, user_id=user, channel_id=save['CHANNEL_ID'])
                 save["LAST_TIME"] = datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
                 save.save()
-            except e:
+            except Exception as e:
                 print(guild, e)
 
     @check_task.before_loop
