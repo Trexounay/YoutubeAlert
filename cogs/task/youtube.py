@@ -57,6 +57,26 @@ class YoutubeCom(commands.Cog, name=__name__):
         save.save()
         await inter.response.send_message(f"added reaction {emoji}")
 
+    @commands.slash_command(
+        name="youtubecheck",
+        description="Refresh youtube list",
+        guild_ids=[797183317115142196, 715201231252881428],
+    )
+    @checks.not_blacklisted()
+    @commands.has_permissions(manage_messages=True)
+    async def youtubecheck(self, inter: ApplicationCommandInteraction):
+        save = get_save(inter.guild_id, __name__)
+        if save:
+            users = save['USERS_ID'] or []
+            try:
+                for user in users:
+                    await self.check_channel(save, user_id=user, channel_id=save['CHANNEL_ID'])
+                save["LAST_TIME"] = datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
+                save.save()
+            except e:
+                print(inter.guild_id, e)
+        await inter.response.send_message(f"refreshed")
+
     async def check_channel(self, save = None, user_id = 0, channel_id = 0, post_message=True):
         cached_runs = {}
         emojis = {}
@@ -113,9 +133,13 @@ class YoutubeCom(commands.Cog, name=__name__):
         for guild in self.bot.guilds:
             save = get_save(guild.id, __name__)
             users = save['USERS_ID'] or []
-            for user in users:
-                await self.check_channel(save, user_id=user, channel_id=save['CHANNEL_ID'])
-            save["LAST_TIME"] = datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
+            try:
+                for user in users:
+                    await self.check_channel(save, user_id=user, channel_id=save['CHANNEL_ID'])
+                save["LAST_TIME"] = datetime.datetime.now(tz=datetime.timezone.utc).isoformat()
+                save.save()
+            except e:
+                print(guild, e)
 
     @check_task.before_loop
     async def before_printer(self):
