@@ -65,6 +65,7 @@ class YoutubeCom(commands.Cog, name=__name__):
     @checks.not_blacklisted()
     @commands.has_permissions(manage_messages=True)
     async def youtubecheck(self, inter: ApplicationCommandInteraction):
+        await inter.response.send_message(f"refreshing")
         save = get_save(inter.guild_id, __name__)
         if save:
             users = save['USERS_ID'] or []
@@ -75,7 +76,6 @@ class YoutubeCom(commands.Cog, name=__name__):
                 save.save()
             except Exception as e:
                 print(inter.guild_id, e)
-        await inter.response.send_message(f"refreshed")
 
     async def check_channel(self, save = None, user_id = 0, channel_id = 0, post_message=True):
         cached_runs = {}
