@@ -107,7 +107,7 @@ class YoutubeCom(commands.Cog, name=__name__):
             save['CACHED_RUNS'] = cached_runs
             save.save()
 
-    @tasks.loop(minutes=5.0)
+    @tasks.loop(minutes=15.0)
     async def check_task(self) -> None:
         print("checking Youtube")
         for guild in self.bot.guilds:
