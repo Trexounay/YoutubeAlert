@@ -43,6 +43,21 @@ class YoutubeCom(commands.Cog, name=__name__):
         #self.check_task.restart()
 
     @commands.slash_command(
+        name="youtubeaddfilter",
+        description="filter lines in the description to add to the notification",
+        guild_ids=[797183317115142196, 715201231252881428],
+    )
+    @checks.not_blacklisted()
+    @commands.has_permissions(manage_messages=True)
+    async def youtubeaddfilter(self, inter: ApplicationCommandInteraction, line_filter: str):
+        save = get_save(inter.guild_id, __name__)
+        if not save["FILTERS"]:
+            save["FILTERS"] = []
+        save["FILTERS"].append(line_filter)
+        save.save()
+        await inter.response.send_message(f"added filter {line_filter}")
+
+    @commands.slash_command(
         name="emojiadd",
         description="Add a youtube channel to the alert list",
         guild_ids=[797183317115142196, 715201231252881428],
@@ -118,6 +133,17 @@ class YoutubeCom(commands.Cog, name=__name__):
                         title=f"**{title} ({user})**",
                         url=f"{link}",
                     )
+                    
+                    if save["FILTERS"]:
+                        lines = description.splitlines()
+                        data = []
+                        for l in lines:
+                            for f in save["FILTERS"]:
+                                if f in l:
+                                    data.append(l)
+                                    break
+                        e.description = "\n".join(data)
+
                     e.set_thumbnail(url=thumb)
                     message = await channel.send(content=f"**{user}** *({time.time()})*", embed=e)
                     for e in emojis:
