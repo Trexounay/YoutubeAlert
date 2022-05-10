@@ -10,7 +10,12 @@ import googleapiclient.discovery
 import json
 import datetime
 
-DEVELOPER_KEY = "AIzaSyB5B2VNlTBH39T346ZFH4C5Y4F-eqVbYgY"
+if not os.path.isfile("config.json"):
+    sys.exit("'config.json' not found! Please add it and try again.")
+else:
+    with open("config.json") as file:
+        config = json.load(file)
+
 api_service_name = "youtube"
 api_version = "v3"
 
@@ -106,7 +111,7 @@ class YoutubeCom(commands.Cog, name=__name__):
             print("no channel")
             return
         os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-        youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey = DEVELOPER_KEY)
+        youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey = config["youtube_api"])
         request = youtube.activities().list(
             part="snippet,contentDetails",
             channelId=user_id,
